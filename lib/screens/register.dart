@@ -9,56 +9,97 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
+  final formKey = GlobalKey<FormState>();
+  String nameString = '';
+  String emailString = '';
+  String passwordString = '';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        actions: <Widget>[
-          IconButton(
-            tooltip: 'Upload To Server',
-            icon: Icon(Icons.cloud_upload),onPressed: (){
-                 print('You Click Upload');
+        appBar: AppBar(
+          actions: <Widget>[
+            IconButton(
+              tooltip: 'Upload To Server',
+              icon: Icon(Icons.cloud_upload),
+              onPressed: () {
+                uploadToServer();
+              },
+            )
+          ],
+          title: Text('Register'),
+        ),
+        body: Form(
+          key: formKey,
+          child: ListView(
+            children: <Widget>[
+              Container(
+                margin: EdgeInsets.only(left: 50.0, right: 50.0, top: 50.0),
+                child: nameTextField(),
+              ),
+              Container(
+                margin: EdgeInsets.only(left: 50.0, right: 50.0, top: 30.0),
+                child: emailTextField(),
+              ),
+              Container(
+                margin: EdgeInsets.only(left: 50.0, right: 50.0, top: 30.0),
+                child: passwordTextField(),
+              )
+            ],
+          ),
+        ));
+  }
 
-            },
-          )
-        ],
-        title: Text('Register'),
-      ),
-      body: ListView(
-        children: <Widget>[
-          Container(
-            margin: EdgeInsets.only(left: 50.0, right: 50.0, top: 50.0),
-            child: nameTextField(),
-          ),
-          Container(
-            margin: EdgeInsets.only(left: 50.0, right: 50.0, top: 30.0),
-            child: emailTextField(),
-          ),
-          Container(
-            margin: EdgeInsets.only(left: 50.0, right: 50.0, top: 30.0),
-            child: passwordTextField(),
-          )
-        ],
-      ),
+  void uploadToServer() {
+    print('You Click Upload');
+    // formKey.currentState.reset();
+    print(formKey.currentState.validate());
+    formKey.currentState.save();
+    print('Name = $nameString,emali = $emailString,password = $passwordString');
+  }
+
+  Widget nameTextField() {
+    return TextFormField(
+      decoration: InputDecoration(labelText: 'Name', hintText: 'Name Only'),
+      validator: (String value) {
+        if (value.length == 0) {
+          return 'Name not Blank ?';
+        }
+      },
+      onSaved: (String name) {
+        nameString = name;
+      },
     );
   }
-}
 
-Widget nameTextField() {
-  return TextFormField(
-    decoration: InputDecoration(labelText: 'Name', hintText: 'Name Only'),
-  );
-}
+  Widget emailTextField() {
+    return TextFormField(
+      decoration: InputDecoration(
+          labelText: 'Email Address :', hintText: 'you@abc.com'),
+      validator: (String email) {
+        if (!email.contains('@')) {
+          return 'Please Fill Email Format';
+        }
+      },
+      onSaved: (String email) {
+        emailString = email;
+      },
+    );
+  }
 
-Widget emailTextField() {
-  return TextFormField(
-    decoration:
-        InputDecoration(labelText: 'Email Address :', hintText: 'you@abc.com'),
-  );
-}
-
-Widget passwordTextField() {
-  return TextFormField(
-    decoration: InputDecoration(labelText: 'Password :', hintText: 'password'),
-  );
-}
+  Widget passwordTextField() {
+    return TextFormField(
+      obscureText: true,
+      decoration:
+          InputDecoration(labelText: 'Password :', hintText: 'password'),
+      validator: (String password) {
+        if (password.length <= 5) {
+          return 'Password must more 5 Charator';
+        }
+      },
+      onSaved: (String password) {
+        passwordString = password;
+      },
+    );
+  }
+} //_RegisterState Class
