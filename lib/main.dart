@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'screens/register.dart';
+import 'package:http/http.dart' show get;
+import 'dart:convert';
 
 void main() {
   runApp(App());
@@ -25,7 +27,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final formKey = GlobalKey<FormState>();
-
+  String emailString,passwordString;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,12 +59,12 @@ class _HomePageState extends State<HomePage> {
               children: <Widget>[
                 new Expanded(
                   child: Container(
-                    child: signInButton(),
+                    child: signInButton(context),
                   ),
                 ),
                 new Expanded(
                   child: Container(
-                    child: signUpButton(context),
+                    child: signUpButton(),
                   ),
                 )
               ],
@@ -101,6 +103,9 @@ class _HomePageState extends State<HomePage> {
           return 'False Email Format';
         }
       },
+      onSaved:(String value){
+        emailString =value;
+      },
     );
   }
 
@@ -110,14 +115,17 @@ class _HomePageState extends State<HomePage> {
       decoration: InputDecoration(
           labelText: 'Password :', hintText: 'more 5 Charactor'),
       validator: (String value) {
-       if (value.length <= 5) {
-         return 'Password must more 5 Charator';
-       }
+        if (value.length <= 5) {
+          return 'Password must more 5 Charator';
+        }
+      },
+      onSaved: (String value){
+        passwordString =value;
       },
     );
   }
 
-  Widget signInButton() {
+  Widget signInButton(BuildContext context) {
     return RaisedButton(
       color: Colors.blue[400],
       child: Text(
@@ -126,12 +134,34 @@ class _HomePageState extends State<HomePage> {
       ),
       onPressed: () {
         print('You click SignIn');
-        print(formKey.currentState.validate());
+        // print(formKey.currentState.validate());
+        if (formKey.currentState.validate()) {
+          formKey.currentState.save();
+           checkEmailAndPass(context, emailString, passwordString);
+        }
       },
     );
   }
 
-  Widget signUpButton(BuildContext context) {
+  void checkEmailAndPass(BuildContext context, String email, String password) async {
+
+    print('email ==> $email,password ==> $password' );
+    
+    String urlString = 'http://androidthai.in.th/sun/getUserWhereUserMint.php?isAdd=true&User=$email';
+    var response =await get(urlString);
+    var result = json.decode(response.body);
+    print('result ==> $result');
+    if (result.toString() == 'null') {
+      
+    } else {
+    }
+
+  }
+void showSnackBar(String massageString){
+  
+}
+
+  Widget signUpButton() {
     return RaisedButton(
       color: Colors.blue[300],
       child: Text(
