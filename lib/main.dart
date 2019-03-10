@@ -27,52 +27,55 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final formKey = GlobalKey<FormState>();
-  String emailString,passwordString;
+  final _scaffold = GlobalKey<ScaffoldState>();
+
+  String emailString, passwordString;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        key: _scaffold,
         body: Form(
-      key: formKey,
-      child: ListView(
-        children: <Widget>[
-          Container(
-            alignment: Alignment.center,
-            // color: Colors.yellow,
-            margin: EdgeInsets.only(top: 50.0),
-            child: logoShow(),
-          ),
-          Container(
-            alignment: Alignment.center,
-            child: titleApp(),
-          ),
-          Container(
-            margin: EdgeInsets.only(left: 30.0, right: 30.0),
-            child: emailTextField(),
-          ),
-          Container(
-            margin: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 15.0),
-            child: passwordText(),
-          ),
-          Container(
-            margin: EdgeInsets.only(left: 50.0, right: 50.0),
-            child: Row(
-              children: <Widget>[
-                new Expanded(
-                  child: Container(
-                    child: signInButton(context),
-                  ),
+          key: formKey,
+          child: ListView(
+            children: <Widget>[
+              Container(
+                alignment: Alignment.center,
+                // color: Colors.yellow,
+                margin: EdgeInsets.only(top: 50.0),
+                child: logoShow(),
+              ),
+              Container(
+                alignment: Alignment.center,
+                child: titleApp(),
+              ),
+              Container(
+                margin: EdgeInsets.only(left: 30.0, right: 30.0),
+                child: emailTextField(),
+              ),
+              Container(
+                margin: EdgeInsets.only(left: 30.0, right: 30.0, bottom: 15.0),
+                child: passwordText(),
+              ),
+              Container(
+                margin: EdgeInsets.only(left: 50.0, right: 50.0),
+                child: Row(
+                  children: <Widget>[
+                    new Expanded(
+                      child: Container(
+                        child: signInButton(context),
+                      ),
+                    ),
+                    new Expanded(
+                      child: Container(
+                        child: signUpButton(),
+                      ),
+                    )
+                  ],
                 ),
-                new Expanded(
-                  child: Container(
-                    child: signUpButton(),
-                  ),
-                )
-              ],
-            ),
-          )
-        ],
-      ),
-    ));
+              )
+            ],
+          ),
+        ));
   }
 
   Widget testText() {
@@ -103,8 +106,8 @@ class _HomePageState extends State<HomePage> {
           return 'False Email Format';
         }
       },
-      onSaved:(String value){
-        emailString =value;
+      onSaved: (String value) {
+        emailString = value;
       },
     );
   }
@@ -119,8 +122,8 @@ class _HomePageState extends State<HomePage> {
           return 'Password must more 5 Charator';
         }
       },
-      onSaved: (String value){
-        passwordString =value;
+      onSaved: (String value) {
+        passwordString = value;
       },
     );
   }
@@ -137,29 +140,42 @@ class _HomePageState extends State<HomePage> {
         // print(formKey.currentState.validate());
         if (formKey.currentState.validate()) {
           formKey.currentState.save();
-           checkEmailAndPass(context, emailString, passwordString);
+          checkEmailAndPass(context, emailString, passwordString);
         }
       },
     );
   }
 
-  void checkEmailAndPass(BuildContext context, String email, String password) async {
+  void checkEmailAndPass(
+      BuildContext context, String email, String password) async {
+    print('email ==> $email,password ==> $password');
 
-    print('email ==> $email,password ==> $password' );
-    
-    String urlString = 'http://androidthai.in.th/sun/getUserWhereUserMint.php?isAdd=true&User=$email';
-    var response =await get(urlString);
+    String urlString =
+        'http://androidthai.in.th/sun/getUserWhereUserMint.php?isAdd=true&User=$email';
+    var response = await get(urlString);
     var result = json.decode(response.body);
     print('result ==> $result');
     if (result.toString() == 'null') {
-      
+      showSnackBar('User False');
     } else {
+      
     }
-
   }
-void showSnackBar(String massageString){
-  
-}
+
+  void showSnackBar(String messageString) {
+    final snackbar = new SnackBar(
+      content: Text(messageString),
+      backgroundColor: Colors.orange,
+      duration: new Duration(seconds: 8),
+      action: new SnackBarAction(
+        label: 'Please Click',
+        onPressed: (){
+          print('You Click SnackBar');
+        },
+      ),
+    );
+    _scaffold.currentState.showSnackBar(snackbar);
+  }
 
   Widget signUpButton() {
     return RaisedButton(
