@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' show get;
+import 'dart:convert';
+import '../main.dart';
 
 class Register extends StatefulWidget {
   final Widget child;
@@ -56,6 +59,23 @@ class _RegisterState extends State<Register> {
     print(formKey.currentState.validate());
     formKey.currentState.save();
     print('Name = $nameString,emali = $emailString,password = $passwordString');
+    sentNewUserToServer(nameString, emailString, passwordString);
+  }
+
+  void sentNewUserToServer(
+      String userName, String userEmail, String userPassword) async {
+    String url =
+        'http://www.androidthai.in.th/sun/addUserMint.php?isAdd=true&Name=$userName&User=$userEmail&Password=$userPassword';
+
+    var response = await get(url);
+    var result = json.decode(response.body);
+    print('result ==> $result');
+
+    if (result.toString() == 'true') {
+      print('Back Process');
+       Navigator.pop(context);
+      
+    } else {}
   }
 
   Widget nameTextField() {
