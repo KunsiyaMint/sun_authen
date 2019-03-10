@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'screens/register.dart';
 import 'package:http/http.dart' show get;
 import 'dart:convert';
+import './models/json_model.dart';
 
 void main() {
   runApp(App());
@@ -29,7 +30,7 @@ class _HomePageState extends State<HomePage> {
   final formKey = GlobalKey<FormState>();
   final _scaffold = GlobalKey<ScaffoldState>();
 
-  String emailString, passwordString;
+  String emailString, passwordString,nameString,truePassword,idString;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -158,8 +159,26 @@ class _HomePageState extends State<HomePage> {
     if (result.toString() == 'null') {
       showSnackBar('User False');
     } else {
-      
-    }
+
+      for (var data in result) {
+        print('data ==> $data');
+        var jsonModel =JsonModel.fromJson(data);
+
+       truePassword =jsonModel.password.toString();
+       nameString = jsonModel.name.toString();
+       idString =jsonModel.id.toString();
+
+      print('id ==> $idString, name ==> $nameString, truePassword ==> $truePassword');
+
+      }
+      if (passwordString ==truePassword) {
+        showSnackBar('Welcome $nameString');
+        
+      } else {
+        showSnackBar('Password False Please Try agin');
+      }
+
+    }//if
   }
 
   void showSnackBar(String messageString) {
